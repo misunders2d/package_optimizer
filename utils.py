@@ -28,7 +28,7 @@ class Box:
         self.s1 = s1
         self.s2 = s2
         self.s3 = s3
-        self.weight = weight
+        self.weight = float(weight)
         sides = sorted([self.s1,self.s2, self.s3])
         self.min_side = sides[0]
         self.median_side = sides[1]
@@ -62,7 +62,7 @@ class Box:
              (min_side+median_side)*2+max_side <= 165 and max_side <= 108 and ship_weight_oversize <= 150),
             
             (SPECIAL_OVERSIZE,
-             (min_side+median_side)*2+max_side >165 and max_side <= 108 and ship_weight_oversize > 150)
+             (min_side+median_side)*2+max_side >165 and max_side <= 108 or ship_weight_oversize > 150)
             )
         for c in conditions:
             if c[1]:

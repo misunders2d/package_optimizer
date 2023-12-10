@@ -9,7 +9,7 @@ MAX_SLIDER = 20.5
 S1 = 4.0
 S2 = 6.0
 S3 = 10.0
-
+st.title('Check if you can optimize Amazon fees')
 img_area = st.container()
 main_img_col, button_col, dims_col = img_area.columns([3,1,2])
 
@@ -34,31 +34,32 @@ def get_metrics(object):
     return object.size_tier, object.fulfillment_fees, object.storage_fees, object.shape, object.weight
 
 if 'custom_img' not in st.session_state:
-    default_img = Box(S3, S2, S1).draw()
+    default_img = Box(S3, S2, S1)
     metrics = get_metrics(Box(S3, S2, S1))
+    st.session_state['custom_img'] = default_img
 else:
-    default_img = st.session_state['custom_img'].draw()
+    default_img = st.session_state['custom_img']
     metrics = get_metrics(st.session_state['custom_img'])
 
-main_img_col.image(default_img)
+main_img_col.image(default_img.draw())
 dims_col.text('Adjust your current package dimensions and weight')
 dims_col.slider('Width, in',0.5, MAX_SLIDER, step = 0.5, key = 's1', value = S3, on_change=update_image)
 dims_col.slider('Height, in',0.5, MAX_SLIDER, step = 0.5, key = 's2', value = S2, on_change=update_image)
 dims_col.slider('Depth, in',0.5, MAX_SLIDER, step = 0.5, key = 's3', value = S1, on_change=update_image)
 reshape_button = button_col.button('Optimize')
-st.session_state.weight = float(button_col.text_input('Product weight, lbs', value = '3', on_change=update_image))
+button_col.text_input('Product weight, lbs', value = '3', on_change=update_image, key = 'weight')
 write_metrics(metrics, button_col, dims = True)
-if reshape_button and 'custom_img' in st.session_state:
-    variant1, variant2, variant3 = st.session_state['custom_img'].reshape()
+# if reshape_button and 'custom_img' in st.session_state:
+variant1, variant2, variant3 = st.session_state['custom_img'].reshape()
 
-    option1.image(variant1.draw())
-    metrics1 = get_metrics(variant1)
-    write_metrics(metrics1, option1, dims = True)
+option1.image(variant1.draw())
+metrics1 = get_metrics(variant1)
+write_metrics(metrics1, option1, dims = True)
 
-    option2.image(variant2.draw())
-    metrics2 = get_metrics(variant2)
-    write_metrics(metrics2, option2, dims = True)
-    
-    option3.image(variant3.draw())
-    metrics3 = get_metrics(variant3)
-    write_metrics(metrics3, option3, dims = True)
+option2.image(variant2.draw())
+metrics2 = get_metrics(variant2)
+write_metrics(metrics2, option2, dims = True)
+
+option3.image(variant3.draw())
+metrics3 = get_metrics(variant3)
+write_metrics(metrics3, option3, dims = True)
