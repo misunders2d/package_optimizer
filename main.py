@@ -27,8 +27,8 @@ def write_metrics(metrics, area, dims = False):
     if dims:
         area.text(f'Dimensions:\nl: {metrics[3][0]}, w: {metrics[3][1]}, h: {metrics[3][2]}\nweight: {metrics[-1]} lbs')
     area.text(f'Size tier:\n{metrics[0]}')
-    area.text(f"FBA fee:\nJan-Sept: {metrics[1]['Jan-Sept']}\nOct-Dec: {metrics[1]['Jan-Sept']}")
-    area.text(f"Storage fee:\nJan-Sept: {metrics[2]['Jan-Sept']}\nOct-Dec: {metrics[2]['Jan-Sept']}\nCombined: {metrics[2]['combined']}")
+    area.text(f"FBA fee:\nJan-Sept: {metrics[1]['Jan-Sept']}\nOct-Dec: {metrics[1]['Oct-Dec']}")
+    area.text(f"Storage fee:\nJan-Sept: {metrics[2]['Jan-Sept']}\nOct-Dec: {metrics[2]['Oct-Dec']}\nCombined: {metrics[2]['combined']}")
 
 def get_metrics(object):
     return object.size_tier, object.fulfillment_fees, object.storage_fees, object.shape, object.weight
@@ -46,9 +46,13 @@ dims_col.text('Adjust your current package dimensions and weight')
 dims_col.slider('Width, in',0.5, MAX_SLIDER, step = 0.5, key = 's1', value = S3, on_change=update_image)
 dims_col.slider('Height, in',0.5, MAX_SLIDER, step = 0.5, key = 's2', value = S2, on_change=update_image)
 dims_col.slider('Depth, in',0.5, MAX_SLIDER, step = 0.5, key = 's3', value = S1, on_change=update_image)
+if dims_col.checkbox('Set hard limits to min side'):
+    dims_col.text_input('', default_img.shape[0], key = 'limit', on_change=update_image)
+else:
+    st.session_state.limit = 0
 button_col.text_input('Product weight, lbs', value = '3', on_change=update_image, key = 'weight')
 write_metrics(metrics, button_col, dims = True)
-variant1, variant2, variant3 = st.session_state['custom_img'].reshape()
+variant1, variant2, variant3 = st.session_state['custom_img'].reshape(limit = float(st.session_state.limit))
 
 option1.image(variant1.draw())
 metrics1 = get_metrics(variant1)

@@ -223,14 +223,14 @@ class Box:
         return buf
     
     
-    def reshape(self):
+    def reshape(self, limit = 0):
         min_side = round(max(self.min_side,0.5)*2)/2
         median_side = round(max(self.median_side,0.5)*2)/2
         max_side = round(max(self.max_side,0.5)*2)/2
         weight = self.weight
         half_perimeter = min_side+median_side+max_side
         
-        base = np.arange(round(min_side/2), half_perimeter, 0.5)
+        base = np.arange(max(round(min_side/2),round(limit)), half_perimeter, 0.5)
         combis = itertools.combinations(base, 3)
         
         shapes = []
