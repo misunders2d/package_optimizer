@@ -46,10 +46,8 @@ dims_col.text('Adjust your current package dimensions and weight')
 dims_col.slider('Width, in',0.5, MAX_SLIDER, step = 0.5, key = 's1', value = S3, on_change=update_image)
 dims_col.slider('Height, in',0.5, MAX_SLIDER, step = 0.5, key = 's2', value = S2, on_change=update_image)
 dims_col.slider('Depth, in',0.5, MAX_SLIDER, step = 0.5, key = 's3', value = S1, on_change=update_image)
-reshape_button = button_col.button('Optimize')
 button_col.text_input('Product weight, lbs', value = '3', on_change=update_image, key = 'weight')
 write_metrics(metrics, button_col, dims = True)
-# if reshape_button and 'custom_img' in st.session_state:
 variant1, variant2, variant3 = st.session_state['custom_img'].reshape()
 
 option1.image(variant1.draw())
