@@ -46,7 +46,7 @@ dims_col.text('Adjust your current package dimensions and weight')
 dims_col.slider('Width, in',0.5, MAX_SLIDER, step = 0.5, key = 's1', value = S3, on_change=update_image)
 dims_col.slider('Height, in',0.5, MAX_SLIDER, step = 0.5, key = 's2', value = S2, on_change=update_image)
 dims_col.slider('Depth, in',0.5, MAX_SLIDER, step = 0.5, key = 's3', value = S1, on_change=update_image)
-if dims_col.checkbox('Set hard limits to min side'):
+if dims_col.checkbox('Set hard limits to min side (in)'):
     dims_col.text_input('', default_img.shape[0], key = 'limit', on_change=update_image)
 else:
     st.session_state.limit = 0
