@@ -39,6 +39,7 @@ class Box:
         self.__get_size_tier()
         self.__get_fulfillment_fees()
         self.__get_storage_fees()
+        self.total_fee = self.fulfillment_fees['combined'] + self.storage_fees['combined']
         
     def __get_size_tier(self):
         weight = self.weight
@@ -244,19 +245,10 @@ class Box:
                   shapes.append(variant)
         elif mode == 'square':
             for values in combis:
-                if square * 0.9 <(2 * (values[0]*values[1] + values[0]*values[2] + values[1]*values[2])) < square * 1.1:
+                if (square * 0.9) < (2 * (values[0]*values[1] + values[0]*values[2] + values[1]*values[2])) < (square * 1.1):
                   variant = Box(*values, weight)
                   shapes.append(variant)
-        best_3 = []
-        for i in range(TOP_BEST):
-            n_1 = shapes[0]
-            for version in shapes:
-                if (version.storage_fees['combined'] < n_1.storage_fees['combined']) and (version.fulfillment_fees['combined'] <= n_1.fulfillment_fees['combined']):
-                    n_1 = version
-            shapes.remove(n_1)
-            best_3.append(n_1)
-        if len(best_3) == 0:
-            return None
+        best_3 = sorted(shapes, key = lambda variant: variant.total_fee)[:3]
         return best_3
     
 # def read_prepare_file():
