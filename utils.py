@@ -35,6 +35,7 @@ class Box:
         self.max_side = sides[2]
         self.cu_ft = (self.min_side * self.median_side * self.max_side) / 1728
         self.shape = (self.min_side, self.median_side, self.max_side)
+        self.square = 2 * (self.s1*self.s2 + self.s1*self.s3 + self.s2*self.s3)
         self.__get_size_tier()
         self.__get_fulfillment_fees()
         self.__get_storage_fees()
@@ -145,6 +146,7 @@ class Box:
         for c in fba_conditions:
             if c[0]:
                 self.fulfillment_fees = c[1]
+                self.fulfillment_fees['combined'] = round((c[1]['Jan-Sept']*9 + c[1]['Oct-Dec']*3) / 12, 4)
                 break
         
 
@@ -223,29 +225,38 @@ class Box:
         return buf
     
     
-    def reshape(self, limit = 0):
+    def reshape(self, limit = 0, mode = 'lengths'):
         min_side = round(max(self.min_side,0.5)*2)/2
         median_side = round(max(self.median_side,0.5)*2)/2
         max_side = round(max(self.max_side,0.5)*2)/2
         weight = self.weight
         half_perimeter = min_side+median_side+max_side
+        square = self.square
         
         base = np.arange(max(round(min_side/2),round(limit)), half_perimeter, 0.5)
         combis = itertools.combinations(base, 3)
-        
+
         shapes = []
-        for values in combis:
-            if sum(values) == half_perimeter:
-                variant = Box(*values, weight)
-                shapes.append(variant)
+        if mode == 'lengths':
+          for values in combis:
+              if sum(values) == half_perimeter:
+                  variant = Box(*values, weight)
+                  shapes.append(variant)
+        elif mode == 'square':
+            for values in combis:
+                if square * 0.9 <(2 * (values[0]*values[1] + values[0]*values[2] + values[1]*values[2])) < square * 1.1:
+                  variant = Box(*values, weight)
+                  shapes.append(variant)
         best_3 = []
         for i in range(TOP_BEST):
             n_1 = shapes[0]
-            for idx, version in enumerate(shapes):
-                if version.storage_fees['combined'] < n_1.storage_fees['combined']:
+            for version in shapes:
+                if (version.storage_fees['combined'] < n_1.storage_fees['combined']) and (version.fulfillment_fees['combined'] <= n_1.fulfillment_fees['combined']):
                     n_1 = version
             shapes.remove(n_1)
             best_3.append(n_1)
+        if len(best_3) == 0:
+            return None
         return best_3
     
 # def read_prepare_file():
