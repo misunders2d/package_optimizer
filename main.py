@@ -50,7 +50,6 @@ dims_col.slider('Height, in',0.5, MAX_SLIDER, step = 0.01, key = 's2', value = S
 dims_col.slider('Depth, in',0.5, MAX_SLIDER, step = 0.01, key = 's3', value = S1, on_change=update_image)
 if dims_col.checkbox('Set hard limits to min side (in)', on_change=update_image):
     dims_col.text_input('Hard limit', default_img.shape[0], key = 'limit', on_change=update_image, label_visibility='hidden')
-    update_image()
 else:
     st.session_state.limit = 0
 button_col.text_input('Product weight, lbs', value = '3', on_change=update_image, key = 'weight')
