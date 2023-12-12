@@ -71,14 +71,17 @@ write_metrics(metrics, button_col, dims = True)
 reshape_mode = 'lengths' if st.session_state.mode == 'Sum of lengths' else 'square'
 try:
     variant1, variant2, variant3 = st.session_state['custom_img'].reshape(limit = float(st.session_state.limit), mode = reshape_mode)
+    option1.text('Option 1')
     option1.image(variant1.draw())
     metrics1 = get_metrics(variant1)
     write_metrics(metrics1, option1, dims = True)
 
+    option2.text('Option 2')
     option2.image(variant2.draw())
     metrics2 = get_metrics(variant2)
     write_metrics(metrics2, option2, dims = True)
 
+    option3.text('Option 3')
     option3.image(variant3.draw())
     metrics3 = get_metrics(variant3)
     write_metrics(metrics3, option3, dims = True)
