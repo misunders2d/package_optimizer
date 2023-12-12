@@ -226,7 +226,7 @@ class Box:
         return buf
     
     
-    def reshape(self, limit = 0.5, mode = 'lengths'):
+    def reshape(self, limit = 0, limit2 = 0, mode = 'lengths'):
         min_side = max(round(self.min_side*2)/2,1)
         median_side = max(round(self.median_side*2)/2,1)
         max_side = max(round(self.max_side*2)/2,1)
@@ -234,18 +234,19 @@ class Box:
         half_perimeter = min_side+median_side+max_side
         square = self.square
         
-        base = np.arange(max(round(min_side/2),limit), half_perimeter, 0.5)
+        base = np.arange(round(min_side/2), half_perimeter, 0.5)
         combis = itertools.combinations(base, 3)
-
         shapes = []
         if mode == 'lengths':
-          for values in combis:
-              if sum(values) == half_perimeter and min(values) > 0:
+          for values_unsorted in combis:
+              values = sorted(values_unsorted)
+              if sum(values) == half_perimeter and (values[0] >= limit and values[1] >= limit2):
                   variant = Box(*values, weight)
                   shapes.append(variant)
         elif mode == 'square':
-            for values in combis:
-                if (square * 0.9) < (2 * (values[0]*values[1] + values[0]*values[2] + values[1]*values[2])) < (square * 1.1):
+            for values_unsorted in combis:
+                values = sorted(values_unsorted)
+                if (square * 0.9) < (2 * (values[0]*values[1] + values[0]*values[2] + values[1]*values[2])) < (square * 1.1) and (values[0] >= limit and values[1] >= limit2):
                   variant = Box(*values, weight)
                   shapes.append(variant)
         best_3 = sorted(shapes, key = lambda variant: variant.total_fee)[:3]

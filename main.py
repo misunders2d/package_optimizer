@@ -68,9 +68,15 @@ if dims_col.checkbox('Set hard limits to min side (in)', on_change=update_image)
     dimensions_col.text_input('Hard limit', default_img.shape[0], key = 'limit', on_change=update_image, label_visibility='hidden')
 else:
     st.session_state.limit = 0
+if dims_col.checkbox('Set hard limits to median side (in)', on_change=update_image):
+    dimensions_col.text_input('Hard limit 2', default_img.shape[0], key = 'limit2', on_change=update_image, label_visibility='hidden')
+else:
+    st.session_state.limit2 = 0
+
+
 reshape_mode = 'lengths' if st.session_state.mode == 'Sum of lengths' else 'square'
 try:
-    variant1, variant2, variant3 = st.session_state['custom_img'].reshape(limit = float(st.session_state.limit), mode = reshape_mode)
+    variant1, variant2, variant3 = st.session_state['custom_img'].reshape(limit = float(st.session_state.limit), limit2 = float(st.session_state.limit2), mode = reshape_mode)
     option1.text('Option 1')
     option1.image(variant1.draw())
     metrics1 = get_metrics(variant1)
