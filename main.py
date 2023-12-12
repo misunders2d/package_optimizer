@@ -65,7 +65,7 @@ dimensions_col.text_input('Product weight, lbs', value = '3', on_change=update_i
 write_metrics(metrics, button_col, dims = True)
 
 if dims_col.checkbox('Set hard limits to min side (in)', on_change=update_image):
-    dims_col.text_input('Hard limit', default_img.shape[0], key = 'limit', on_change=update_image, label_visibility='hidden')
+    dimensions_col.text_input('Hard limit', default_img.shape[0], key = 'limit', on_change=update_image, label_visibility='hidden')
 else:
     st.session_state.limit = 0
 reshape_mode = 'lengths' if st.session_state.mode == 'Sum of lengths' else 'square'
