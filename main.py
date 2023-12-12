@@ -32,13 +32,13 @@ def update_slider():
 def write_metrics(metrics, area, dims = False):
     if dims:
         area.markdown(f'Dimensions:\nl: {metrics[3][0]}, w: {metrics[3][1]}, h: {metrics[3][2]}\nweight: {metrics[4]} lbs')
-    area.text(f'V (cu_ft): {round(metrics[5],3)}, S(sqft): {metrics[6]}')
+    area.text(f'V (cu_ft): {round(metrics[5],3)}, S(sqft): {metrics[6]}\nDim weight: {metrics[7]}')
     area.text(f'Size tier:\n{metrics[0]}')
     area.text(f"FBA fee:\nJan-Sept: {metrics[1]['Jan-Sept']}\nOct-Dec: {metrics[1]['Oct-Dec']}\nCombined FBA: {metrics[1]['combined']}")
     area.text(f"Storage fee:\nJan-Sept: {metrics[2]['Jan-Sept']}\nOct-Dec: {metrics[2]['Oct-Dec']}\nCombined storage: {metrics[2]['combined']}")
 
 def get_metrics(object):
-    return object.size_tier, object.fulfillment_fees, object.storage_fees, object.shape, object.weight, object.cu_ft, object.square
+    return object.size_tier, object.fulfillment_fees, object.storage_fees, object.shape, object.weight, object.cu_ft, object.square, object.dim_weight
 
 if 'custom_img' not in st.session_state:
     default_img = Box(S3, S2, S1)
@@ -84,3 +84,5 @@ try:
     write_metrics(metrics3, option3, dims = True)
 except Exception as e:
     st.error(f'Sorry, no available options:\n\n{e}')
+
+st.write(dir(st.session_state['custom_img']))
