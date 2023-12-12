@@ -228,8 +228,8 @@ class Box:
     
     def reshape(self, limit = 0, mode = 'lengths'):
         min_side = max(round(self.min_side*2)/2,0.5)
-        median_side = round(max(self.median_side,0.5)*2)/2
-        max_side = round(max(self.max_side,0.5)*2)/2
+        median_side = max(round(self.median_side*2)/2,0.5)
+        max_side = max(round(self.max_side*2)/2,0.5)
         weight = self.weight
         half_perimeter = min_side+median_side+max_side
         square = self.square
