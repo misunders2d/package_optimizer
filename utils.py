@@ -25,9 +25,9 @@ TOP_BEST = 3
 class Box:
     
     def __init__(self, s1 = 4, s2 = 6, s3 = 10, weight = 3):
-        self.s1 = s1
-        self.s2 = s2
-        self.s3 = s3
+        self.s1 = float(s1)
+        self.s2 = float(s2)
+        self.s3 = float(s3)
         self.weight = float(weight)
         sides = sorted([self.s1,self.s2, self.s3])
         self.min_side = sides[0]
@@ -240,7 +240,7 @@ class Box:
         shapes = []
         if mode == 'lengths':
           for values in combis:
-              if sum(values) == half_perimeter:
+              if sum(values) == half_perimeter and min(values) > 0:
                   variant = Box(*values, weight)
                   shapes.append(variant)
         elif mode == 'square':
