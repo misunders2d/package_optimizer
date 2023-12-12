@@ -11,7 +11,7 @@ S2 = 6.0
 S3 = 10.0
 st.markdown('### Check if you can optimize Amazon fees')
 img_area = st.container()
-main_img_col, button_col, dims_col = img_area.columns([3,1,2])
+main_img_col, button_col, dims_col, dimensions_col = img_area.columns([2,1,1,1])
 
 options_area = st.container()
 option1, option2, option3 = options_area.columns([1,1,1])
@@ -22,6 +22,12 @@ def update_image():
     side3 = st.session_state.s3
     weight = st.session_state.weight
     st.session_state['custom_img'] = Box(side1, side2, side3, weight)
+
+def update_slider():
+    st.session_state.s1 = float(st.session_state.input_width)
+    st.session_state.s2 = float(st.session_state.input_height)
+    st.session_state.s3 = float(st.session_state.input_depth)
+    update_image()
     
 def write_metrics(metrics, area, dims = False):
     if dims:
@@ -43,11 +49,19 @@ else:
     metrics = get_metrics(st.session_state['custom_img'])
 
 main_img_col.image(default_img.draw())
-dims_col.text('Adjust your current package dimensions and weight')
+dims_col.text('Adjust your current package\ndimensions and weight')
+dimensions_col.text('Or enter precise dimensions\nin boxes below')
 dims_col.radio('Select reshape mode', options = ['Sum of lengths','Square'], horizontal = True, key = 'mode', on_change=update_image)
+
 dims_col.slider('Width, in',0.5, MAX_SLIDER, step = 0.01, key = 's1', value = S3, on_change=update_image)
+dimensions_col.text_input('width', value = st.session_state.s1, on_change=update_slider, key = 'input_width')
+
 dims_col.slider('Height, in',0.5, MAX_SLIDER, step = 0.01, key = 's2', value = S2, on_change=update_image)
+dimensions_col.text_input('height', value = st.session_state.s2, on_change=update_slider, key = 'input_height')
+
 dims_col.slider('Depth, in',0.5, MAX_SLIDER, step = 0.01, key = 's3', value = S1, on_change=update_image)
+dimensions_col.text_input('depth', value = st.session_state.s3, on_change=update_slider, key = 'input_depth')
+
 if dims_col.checkbox('Set hard limits to min side (in)', on_change=update_image):
     dims_col.text_input('Hard limit', default_img.shape[0], key = 'limit', on_change=update_image, label_visibility='hidden')
 else:
