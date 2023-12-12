@@ -84,5 +84,3 @@ try:
     write_metrics(metrics3, option3, dims = True)
 except Exception as e:
     st.error(f'Sorry, no available options:\n\n{e}')
-
-st.write(dir(st.session_state['custom_img']))
