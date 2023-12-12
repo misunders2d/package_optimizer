@@ -67,11 +67,11 @@ write_metrics(metrics, button_col, dims = True)
 if dims_col.checkbox('Set hard limits to min side (in)', on_change=update_image):
     dimensions_col.text_input('Hard limit', default_img.shape[0], key = 'limit', on_change=update_image, label_visibility='hidden')
 else:
-    st.session_state.limit = 0
+    st.session_state.limit = 0.5
 if dims_col.checkbox('Set hard limits to median side (in)', on_change=update_image):
     dimensions_col.text_input('Hard limit 2', default_img.shape[0], key = 'limit2', on_change=update_image, label_visibility='hidden')
 else:
-    st.session_state.limit2 = 0
+    st.session_state.limit2 = 0.5
 
 
 reshape_mode = 'lengths' if st.session_state.mode == 'Sum of lengths' else 'square'
