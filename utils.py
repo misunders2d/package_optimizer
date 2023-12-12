@@ -226,7 +226,7 @@ class Box:
         return buf
     
     
-    def reshape(self, limit = 0, limit2 = 0, mode = 'lengths'):
+    def reshape(self, limit = 0.5, limit2 = 0.5, mode = 'lengths'):
         min_side = max(round(self.min_side*2)/2,1)
         median_side = max(round(self.median_side*2)/2,1)
         max_side = max(round(self.max_side*2)/2,1)
