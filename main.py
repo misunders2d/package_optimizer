@@ -51,7 +51,7 @@ else:
 main_img_col.image(default_img.draw())
 dims_col.text('Adjust your current package\ndimensions and weight')
 dimensions_col.text('Or enter precise dimensions\nin boxes below')
-dims_col.radio('Select reshape mode', options = ['Sum of lengths','Square'], horizontal = True, key = 'mode', on_change=update_image)
+dims_col.radio('Select reshape mode', options = ['Sum of lengths','Square'], horizontal = True, key = 'mode', on_change=update_image, help = 'The reshaping will be done either by keeping the sum of lenghts, or the total square of the box')
 
 dims_col.slider('Width, in',0.5, MAX_SLIDER, step = 0.01, key = 's1', value = S3, on_change=update_image)
 dimensions_col.text_input('width', value = st.session_state.s1, on_change=update_slider, key = 'input_width')
@@ -63,7 +63,6 @@ dims_col.slider('Depth, in',0.5, MAX_SLIDER, step = 0.01, key = 's3', value = S1
 dimensions_col.text_input('depth', value = st.session_state.s3, on_change=update_slider, key = 'input_depth')
 dimensions_col.text_input('Product weight, lbs', value = '3', on_change=update_image, key = 'weight')
 write_metrics(metrics, button_col, dims = True)
-
 
 if dims_col.checkbox('Set hard limits to min side (in)', on_change=update_image):
     dims_col.text_input('Hard limit', default_img.shape[0], key = 'limit', on_change=update_image, label_visibility='hidden')
