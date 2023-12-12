@@ -53,7 +53,7 @@ dims_col.text('Adjust your current package\ndimensions and weight')
 dimensions_col.text('Or enter precise dimensions\nin boxes below')
 dims_col.radio('Select reshape mode', options = ['Sum of lengths','Square'], horizontal = True, key = 'mode', on_change=update_image, help = 'The reshaping will be done either by keeping the sum of lenghts, or the total square of the box')
 
-dims_col.slider('Width, in',0.5, MAX_SLIDER, step = 0.01, key = 's1', value = S3, on_change=update_image)
+dims_col.slider('Width, in',0.5, MAX_SLIDER, step = 0.01, key = 's1', value = S3, on_change=update_image, )
 dimensions_col.text_input('width', value = st.session_state.s1, on_change=update_slider, key = 'input_width')
 
 dims_col.slider('Height, in',0.5, MAX_SLIDER, step = 0.01, key = 's2', value = S2, on_change=update_image)
@@ -91,5 +91,5 @@ try:
     option3.image(variant3.draw())
     metrics3 = get_metrics(variant3)
     write_metrics(metrics3, option3, dims = True)
-except Exception as e:
-    st.error(f'Sorry, no available options:\n\n{e}')
+except Exception:
+    st.error(f'Sorry, no available options with these parameters')
