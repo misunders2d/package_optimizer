@@ -264,23 +264,24 @@ def read_prepare_file(file_obj, limit = 0.5, limit2 = 0.5, mode = 'lengths', top
     file = file.dropna(subset = ['side1', 'side2', 'side3', 'weight, lbs'])
     products = file.values.tolist()
     
-    columns = ['Product', 'side1', 'side2', 'side3', 'weight, lbs', 'size tier', 'storage fee']
+    columns = ['Product', 'option','side1', 'side2', 'side3', 'weight, lbs', 'size tier', 'storage fee']
     
-    df = pd.DataFrame()
+    df = pd.DataFrame(columns = columns)
     for c in products:
         item = Box(c[1], c[2], c[3], c[4])
         fees = item.storage_fees
         current_fee = fees['combined']
-        temp_product = pd.DataFrame([c])
+        temp_product = pd.DataFrame([c], columns = ['Product', 'side1', 'side2', 'side3', 'weight, lbs'])
         temp_product['size tier'] = item.size_tier
         temp_product['storage fee'] = current_fee
-        temp_product.columns = columns
+        temp_product['option'] = 'original'
+        temp_product = temp_product[columns]
 
         best_options = item.reshape(limit, limit2, mode, top_best)
         temp_option = pd.DataFrame(columns = columns)
         for i, option in enumerate(best_options):
             temp = pd.DataFrame(
-                [[c[0]+ f' option {i+1}']+list(option.shape) + [option.weight, option.size_tier, option.storage_fees['combined']]],
+                [[c[0]]+ [f' option {i+1}']+list(option.shape) + [option.weight, option.size_tier, option.storage_fees['combined']]],
                 columns = columns)
             temp_option = pd.concat([temp_option, temp])
         df = pd.concat([df, temp_product, temp_option])
