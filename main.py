@@ -12,7 +12,7 @@ S3 = 10.0
 st.markdown('### Check if you can optimize Amazon fees')
 
 with st.expander('Upload your own file'):
-    download_button, upload_button = st.columns([1,1])
+    download_button, upload_button = st.columns([1,4])
     buf = create_upload_template()
     download_button.download_button('Download template', file_name='Template.xlsx', data=buf.getvalue())
     if upload_button.file_uploader('Upload your file', key = 'upload_file'):
