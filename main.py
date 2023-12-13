@@ -10,6 +10,16 @@ S1 = 4.0
 S2 = 6.0
 S3 = 10.0
 st.markdown('### Check if you can optimize Amazon fees')
+
+with st.expander('Upload your own file'):
+    download_button, upload_button = st.columns([1,1])
+    buf = create_upload_template()
+    download_button.download_button('Download template', file_name='Template.xlsx', data=buf.getvalue())
+    if upload_button.file_uploader('Upload your file', key = 'upload_file'):
+        result = read_prepare_file(st.session_state.upload_file, st.session_state.limit, st.session_state.limit2, st.session_state.reshape_mode, top_best=5)
+        upload_button.download_button('Download result', file_name='Best options.xlsx', data = result.getvalue())
+
+
 img_area = st.container()
 main_img_col, button_col, dims_col, dimensions_col = img_area.columns([2,1,1,1])
 
@@ -74,9 +84,9 @@ else:
     st.session_state.limit2 = 0.5
 
 
-reshape_mode = 'lengths' if st.session_state.mode == 'Sum of lengths' else 'square'
+st.session_state.reshape_mode = 'lengths' if st.session_state.mode == 'Sum of lengths' else 'square'
 try:
-    variant1, variant2, variant3 = st.session_state['custom_img'].reshape(limit = float(st.session_state.limit), limit2 = float(st.session_state.limit2), mode = reshape_mode)
+    variant1, variant2, variant3 = st.session_state['custom_img'].reshape(limit = float(st.session_state.limit), limit2 = float(st.session_state.limit2), mode = st.session_state.reshape_mode)[:3]
     option1.text('Option 1')
     option1.image(variant1.draw())
     metrics1 = get_metrics(variant1)

@@ -19,8 +19,6 @@ MEDIUM_OVERSIZE = 'Medium oversize'
 LARGE_OVERSIZE = 'Large oversize'
 SPECIAL_OVERSIZE = 'Special oversize'
 ROUND = 4
-TOP_BEST = 3
-
 
 class Box:
     
@@ -226,7 +224,7 @@ class Box:
         return buf
     
     
-    def reshape(self, limit = 0.5, limit2 = 0.5, mode = 'lengths'):
+    def reshape(self, limit = 0.5, limit2 = 0.5, mode = 'lengths', top_best = 3):
         min_side = max(round(self.min_side*2)/2,1)
         median_side = max(round(self.median_side*2)/2,1)
         max_side = max(round(self.max_side*2)/2,1)
@@ -249,36 +247,45 @@ class Box:
                 if (square * 0.9) < (2 * (values[0]*values[1] + values[0]*values[2] + values[1]*values[2])) < (square * 1.1) and (values[0] >= limit and values[1] >= limit2):
                   variant = Box(*values, weight)
                   shapes.append(variant)
-        best_3 = sorted(shapes, key = lambda variant: variant.total_fee)[:3]
+        best_3 = sorted(shapes, key = lambda variant: variant.total_fee)[:top_best]
         return best_3
-    
-# def read_prepare_file():
-#     file = pd.read_excel(
-#         r'G:\Shared drives\30 Sales\30.1 MELLANNI\30.11 AMAZON\30.111 US\Sales\DIMENSIONS.xlsx',
-#         skiprows = 1)
-#     file = file[['Collection','Size','l','w','h','Individual Weight Lbs']]
-#     file = file.dropna(subset = 'l')
-#     file = file.dropna(subset = 'Individual Weight Lbs')
-#     collections = file.values.tolist()
-#     cols = [
-#         'Collection','Size','l','w','h','weight','Current size tier','Current fee (yearly avg)',
-#         'l option 1','w option 1','h option 1','Size tier 1','fee option 1',
-#         'l option 2','w option 2','h option 2','Size tier 2','fee option 2',
-#         'l option 3','w option 3','h option 3','Size tier 3','fee option 3']
-#     df = pd.DataFrame()
-#     for c in collections:
-#         item = get_size_tier(c[2], c[3], c[4], c[5])
-#         fees = get_storage_fees(item)
-#         current_fee = round(fees['Jan-Sept']*9+fees['Oct-Dec']*3,ROUND)
-#         best_dims = reshape(item)
-#         best = [[x['sides'][0], x['sides'][1], x['sides'][2], x['size tier'], x['fees']] for x in best_dims]
+  
+def create_upload_template():
+    df = pd.DataFrame(columns = ['Product', 'side1', 'side2', 'side3', 'weight, lbs'])
+    buf = BytesIO()
+    with pd.ExcelWriter(buf, engine = 'xlsxwriter') as writer:
+        df.to_excel(writer, index = False)
+    return buf
 
-#         file = pd.DataFrame([c+[item['Size tier']]+[current_fee]+best[0]+best[1]+best[2]], columns = cols)
-#         df = pd.concat([df, file])
-#     df.to_excel(r'c:\temp\pics\fees.xlsx', index = False)
-#     return None
+def read_prepare_file(file_obj, limit = 0.5, limit2 = 0.5, mode = 'lengths', top_best = 3):
+    file = pd.read_excel(file_obj)
+    if not all(file.columns == ['Product', 'side1', 'side2', 'side3', 'weight, lbs']):
+        return None
+    file = file.dropna(subset = ['side1', 'side2', 'side3', 'weight, lbs'])
+    products = file.values.tolist()
     
-# if __name__ == '__main__':
-#     main()
-   
+    columns = ['Product', 'side1', 'side2', 'side3', 'weight, lbs', 'size tier', 'storage fee']
+    
+    df = pd.DataFrame()
+    for c in products:
+        item = Box(c[1], c[2], c[3], c[4])
+        fees = item.storage_fees
+        current_fee = fees['combined']
+        temp_product = pd.DataFrame([c])
+        temp_product['size tier'] = item.size_tier
+        temp_product['storage fee'] = current_fee
+        temp_product.columns = columns
+
+        best_options = item.reshape(limit, limit2, mode, top_best)
+        temp_option = pd.DataFrame(columns = columns)
+        for i, option in enumerate(best_options):
+            temp = pd.DataFrame(
+                [[c[0]+ f' option {i+1}']+list(option.shape) + [option.weight, option.size_tier, option.storage_fees['combined']]],
+                columns = columns)
+            temp_option = pd.concat([temp_option, temp])
+        df = pd.concat([df, temp_product, temp_option])
+    buf = BytesIO()
+    with pd.ExcelWriter(buf, engine = 'xlsxwriter') as writer:
+        df.to_excel(writer, index = False)
+    return buf
     
