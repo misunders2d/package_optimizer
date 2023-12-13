@@ -1,6 +1,8 @@
 import streamlit as st
 from io import BytesIO
 from PIL import Image
+import warnings
+warnings.filterwarnings('ignore')
 from utils import *
 
 st.set_page_config(page_title = 'Package optimizer', layout ='wide')
