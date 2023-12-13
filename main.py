@@ -24,9 +24,9 @@ def update_image():
     st.session_state['custom_img'] = Box(side1, side2, side3, weight)
 
 def update_slider():
-    st.session_state.s1 = float(st.session_state.input_width.replace(',','.'))
-    st.session_state.s2 = float(st.session_state.input_height.replace(',','.'))
-    st.session_state.s3 = float(st.session_state.input_depth.replace(',','.'))
+    st.session_state.s1 = float(st.session_state.input_width)
+    st.session_state.s2 = float(st.session_state.input_height)
+    st.session_state.s3 = float(st.session_state.input_depth)
     update_image()
     
 def write_metrics(metrics, area, dims = False):
@@ -54,22 +54,22 @@ dimensions_col.text('Or enter precise dimensions\nin boxes below')
 dims_col.radio('Select reshape mode', options = ['Sum of lengths','Square'], horizontal = True, key = 'mode', on_change=update_image, help = 'The reshaping will be done either by keeping the sum of lenghts, or the total square of the box')
 
 dims_col.slider('Width, in',0.5, MAX_SLIDER, step = 0.01, key = 's1', value = S3, on_change=update_image, )
-dimensions_col.text_input('width', value = st.session_state.s1, on_change=update_slider, key = 'input_width')
+dimensions_col.number_input('width', value = st.session_state.s1, on_change=update_slider, key = 'input_width', min_value = 0.01)
 
 dims_col.slider('Height, in',0.5, MAX_SLIDER, step = 0.01, key = 's2', value = S2, on_change=update_image)
-dimensions_col.text_input('height', value = st.session_state.s2, on_change=update_slider, key = 'input_height')
+dimensions_col.number_input('height', value = st.session_state.s2, on_change=update_slider, key = 'input_height', min_value = 0.01)
 
 dims_col.slider('Depth, in',0.5, MAX_SLIDER, step = 0.01, key = 's3', value = S1, on_change=update_image)
-dimensions_col.text_input('depth', value = st.session_state.s3, on_change=update_slider, key = 'input_depth')
-dimensions_col.text_input('Product weight, lbs', value = '3', on_change=update_image, key = 'weight')
+dimensions_col.number_input('depth', value = st.session_state.s3, on_change=update_slider, key = 'input_depth', min_value = 0.01)
+dimensions_col.number_input('Product weight, lbs', value = 3.0, on_change=update_image, key = 'weight', step = 0.01, min_value = 0.01)
 write_metrics(metrics, button_col, dims = True)
 
 if dims_col.checkbox('Set hard limits to min side (in)', on_change=update_image):
-    dimensions_col.text_input('Hard limit', default_img.shape[0], key = 'limit', on_change=update_image, label_visibility='hidden')
+    dimensions_col.number_input('Hard limit', value = default_img.shape[0], key = 'limit', on_change=update_image, label_visibility='hidden', min_value = 0.01)
 else:
     st.session_state.limit = 0.5
 if dims_col.checkbox('Set hard limits to median side (in)', on_change=update_image):
-    dimensions_col.text_input('Hard limit 2', default_img.shape[0], key = 'limit2', on_change=update_image, label_visibility='hidden')
+    dimensions_col.number_input('Hard limit 2', value = default_img.shape[0], key = 'limit2', on_change=update_image, label_visibility='hidden', min_value = 0.01)
 else:
     st.session_state.limit2 = 0.5
 
