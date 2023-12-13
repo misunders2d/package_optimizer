@@ -24,9 +24,9 @@ def update_image():
     st.session_state['custom_img'] = Box(side1, side2, side3, weight)
 
 def update_slider():
-    st.session_state.s1 = float(st.session_state.input_width)
-    st.session_state.s2 = float(st.session_state.input_height)
-    st.session_state.s3 = float(st.session_state.input_depth)
+    st.session_state.s1 = float(st.session_state.input_width.replace(',','.'))
+    st.session_state.s2 = float(st.session_state.input_height.replace(',','.'))
+    st.session_state.s3 = float(st.session_state.input_depth.replace(',','.'))
     update_image()
     
 def write_metrics(metrics, area, dims = False):
