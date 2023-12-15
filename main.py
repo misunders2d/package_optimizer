@@ -18,7 +18,7 @@ with st.expander('Upload your own file'):
     buf = create_upload_template()
     download_button.download_button('Download template', file_name='Template.xlsx', data=buf.getvalue())
     if upload_button.file_uploader('Upload your file', key = 'upload_file'):
-        result = read_prepare_file(st.session_state.upload_file, st.session_state.limit, st.session_state.limit2, st.session_state.reshape_mode, top_best=5)
+        result = read_prepare_file(st.session_state.upload_file, st.session_state.limit, st.session_state.limit2, st.session_state.reshape_mode, top_best=30)
         upload_button.download_button('Download result', file_name='Best options.xlsx', data = result.getvalue())
 
 
