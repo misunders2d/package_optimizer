@@ -278,6 +278,7 @@ def read_prepare_file(file_obj, limit = 0.5, limit2 = 0.5, mode = 'lengths', top
     
     df = pd.DataFrame(columns = columns)
     for c in products:
+        c[1:4] = sorted(c[1:4])
         item = Box(c[1], c[2], c[3], c[4])
         fees = item.storage_fees
         current_fee = fees['combined']
