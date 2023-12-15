@@ -26,7 +26,15 @@ img_area = st.container()
 main_img_col, button_col, dims_col, dimensions_col = img_area.columns([2,1,1,1])
 
 options_area = st.container()
-option1, option2, option3 = options_area.columns([1,1,1])
+# option1, option2, option3 = options_area.columns([1,1,1])
+
+def create_columns(n):
+    rows = n//3 + 1
+    all_cols = []
+    for i,row in enumerate(range(rows)):
+        globals()[f'option{i}_1'], globals()[f'option{i}_2'], globals()[f'option{i}_3'] = options_area.columns([1,1,1])
+        all_cols.extend([globals()[f'option{i}_1'], globals()[f'option{i}_2'], globals()[f'option{i}_3']])
+    return all_cols
 
 def update_image():
     side1 = st.session_state.s1
@@ -87,21 +95,14 @@ else:
 
 
 st.session_state.reshape_mode = 'lengths' if st.session_state.mode == 'Sum of lengths' else 'square'
+variants = st.session_state['custom_img'].reshape(limit = float(st.session_state.limit), limit2 = float(st.session_state.limit2), mode = st.session_state.reshape_mode)
+option_cols = create_columns(len(variants))
 try:
-    variant1, variant2, variant3 = st.session_state['custom_img'].reshape(limit = float(st.session_state.limit), limit2 = float(st.session_state.limit2), mode = st.session_state.reshape_mode)[:3]
-    option1.text('Option 1')
-    option1.image(variant1.draw())
-    metrics1 = get_metrics(variant1)
-    write_metrics(metrics1, option1, dims = True)
-
-    option2.text('Option 2')
-    option2.image(variant2.draw())
-    metrics2 = get_metrics(variant2)
-    write_metrics(metrics2, option2, dims = True)
-
-    option3.text('Option 3')
-    option3.image(variant3.draw())
-    metrics3 = get_metrics(variant3)
-    write_metrics(metrics3, option3, dims = True)
-except Exception:
-    st.error(f'Sorry, no available options with these parameters')
+    for i, oc in enumerate(option_cols):
+        if i < len(variants):
+            oc.image(variants[i].draw())
+            oc.text(f'Option {i+1}')
+            metrics = get_metrics(variants[i])
+            write_metrics(metrics, oc, dims = True)
+except Exception as e:
+    st.error(f'Sorry, no available options with these parameters:\n{e}')

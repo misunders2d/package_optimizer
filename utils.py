@@ -168,8 +168,18 @@ class Box:
                 'Oct-Dec': oct_dec,
                 'combined': round((jan_sept*9 + oct_dec*3)/12,ROUND)}
 
-    
-    
+    def __str__(self):
+        return(f'''Box with the shape of {self.shape}\nFBA fees combined: {self.fulfillment_fees["combined"]}\nStorage fees combined: {self.storage_fees["combined"]}''')
+
+    def __repr__(self):
+        return self.__str__()
+
+    def __lt__(self, other):
+        return self.total_fee < other.total_fee
+
+    def __le__(self, other):
+        return self.total_fee <= other.total_fee
+
     def __create_shape(self,ax, size):
         x,y,z = (0,0,0)
         width, depth, height = size
@@ -224,7 +234,7 @@ class Box:
         return buf
     
     
-    def reshape(self, limit = 0.5, limit2 = 0.5, mode = 'lengths', top_best = 3):
+    def reshape(self, limit = 0.5, limit2 = 0.5, mode = 'lengths', top_best = 30):
         min_side = max(round(self.min_side*2)/2,1)
         median_side = max(round(self.median_side*2)/2,1)
         max_side = max(round(self.max_side*2)/2,1)
@@ -235,19 +245,19 @@ class Box:
         base = np.arange(round(min_side/2), half_perimeter, 0.5)
         combis = itertools.combinations(base, 3)
         shapes = []
-        if mode == 'lengths':
-          for values_unsorted in combis:
-              values = sorted(values_unsorted)
-              if sum(values) == half_perimeter and (values[0] >= limit and values[1] >= limit2):
+        for values_unsorted in combis:
+            values = sorted(values_unsorted)
+            if mode == 'lengths':
+                if sum(values) == half_perimeter and (values[0] >= limit and values[1] >= limit2):
                   variant = Box(*values, weight)
-                  shapes.append(variant)
-        elif mode == 'square':
-            for values_unsorted in combis:
-                values = sorted(values_unsorted)
+                  if variant and (variant < self):
+                      shapes.append(variant)
+            elif mode == 'square':
                 if (square * 0.9) < (2 * (values[0]*values[1] + values[0]*values[2] + values[1]*values[2])) < (square * 1.1) and (values[0] >= limit and values[1] >= limit2):
-                  variant = Box(*values, weight)
-                  shapes.append(variant)
-        best_3 = sorted(shapes, key = lambda variant: variant.total_fee)[:top_best]
+                    variant = Box(*values, weight)
+                    if variant and (variant < self):
+                        shapes.append(variant)
+        best_3 = sorted(shapes)[:top_best]
         return best_3
   
 def create_upload_template():
@@ -257,7 +267,7 @@ def create_upload_template():
         df.to_excel(writer, index = False)
     return buf
 
-def read_prepare_file(file_obj, limit = 0.5, limit2 = 0.5, mode = 'lengths', top_best = 3):
+def read_prepare_file(file_obj, limit = 0.5, limit2 = 0.5, mode = 'lengths', top_best = 30):
     file = pd.read_excel(file_obj)
     if not all(file.columns == ['Product', 'side1', 'side2', 'side3', 'weight, lbs']):
         return None
