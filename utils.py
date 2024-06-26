@@ -48,7 +48,7 @@ class Box:
         
         conditions = (
             (SMALL_STANDARD,
-             min_side <= 0.75 and median_side <= 12 and max_side <= 15 and weight <= 1),
+             min_side <= 0.75 and median_side <= 12 and max_side <= 15 and ship_weight <= 1),
             
             (LARGE_STANDARD,
              min_side <= 8 and median_side <= 14 and max_side <= 18 and ship_weight <= 20),
@@ -62,12 +62,15 @@ class Box:
             
             (EXTRA_LARGE_70_150, 70 < ship_weight <= 150),
 
-            (EXTRA_LARGE_150, weight >150 )
+            (EXTRA_LARGE_150, ship_weight >150 )
             )
         for c in conditions:
             if c[1]:
                 self.size_tier = c[0]
-                self.dim_weight = ship_weight if 'standard' in c[0] else ship_weight_oversize
+                if self.size_tier in (SMALL_STANDARD,EXTRA_LARGE_150):
+                    self.dim_weight = weight
+                else:
+                    self.dim_weight = ship_weight
                 break
     
     def __get_fulfillment_fees(self):
