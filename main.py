@@ -68,6 +68,7 @@ else:
     default_img = st.session_state['custom_img']
     metrics = get_metrics(st.session_state['custom_img'])
 
+main_img_col.markdown('##### This is your current package #####')
 main_img_col.image(default_img.draw())
 dims_col.text('Adjust your current package\ndimensions and weight')
 dimensions_col.text('Or enter precise dimensions\nin boxes below')
