@@ -14,10 +14,11 @@ from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 
 SMALL_STANDARD = 'Small standard size'
 LARGE_STANDARD = 'Large standard size'
-SMALL_OVERSIZE = 'Small oversize'
-MEDIUM_OVERSIZE = 'Medium oversize'
-LARGE_OVERSIZE = 'Large oversize'
-SPECIAL_OVERSIZE = 'Special oversize'
+LARGE_BULKY = 'Large bulky'
+EXTRA_LARGE_0_50 = 'Extra large 0-50'
+EXTRA_LARGE_50_70 = 'Extra large 50-70'
+EXTRA_LARGE_70_150 = 'Extra large 70-150'
+EXTRA_LARGE_150 = 'Extra large 150+'
 ROUND = 4
 
 class Box:
@@ -52,17 +53,16 @@ class Box:
             (LARGE_STANDARD,
              min_side <= 8 and median_side <= 14 and max_side <= 18 and ship_weight <= 20),
             
-            (SMALL_OVERSIZE,
-             (min_side+median_side)*2+max_side <= 130 and median_side <= 30 and max_side <= 60 and ship_weight_oversize <= 70),
+            (LARGE_BULKY,
+             (min_side+median_side)*2+max_side <= 130 and median_side <= 33 and max_side <= 59 and ship_weight_oversize <= 50),
             
-            (MEDIUM_OVERSIZE,
-             (min_side+median_side)*2+max_side <= 130 and max_side <= 108 and ship_weight_oversize <= 150),
+            (EXTRA_LARGE_0_50, ship_weight_oversize <= 50),
             
-            (LARGE_OVERSIZE,
-             (min_side+median_side)*2+max_side <= 165 and max_side <= 108 and ship_weight_oversize <= 150),
+            (EXTRA_LARGE_50_70, 50 < ship_weight_oversize <= 70),
             
-            (SPECIAL_OVERSIZE,
-             (min_side+median_side)*2+max_side >165 and max_side <= 108 or ship_weight_oversize > 150)
+            (EXTRA_LARGE_70_150, 70 < ship_weight_oversize <= 150),
+
+            (EXTRA_LARGE_150, ship_weight_oversize >150 )
             )
         for c in conditions:
             if c[1]:
@@ -78,68 +78,80 @@ class Box:
         weight_to_use = {
             SMALL_STANDARD:weight,
             LARGE_STANDARD:max(dim_weight,weight),
-            SMALL_OVERSIZE:max(dim_weight,weight),
-            MEDIUM_OVERSIZE:max(dim_weight,weight),
-            LARGE_OVERSIZE:max(dim_weight,weight),
-            SPECIAL_OVERSIZE:weight
+            LARGE_BULKY:max(dim_weight,weight),
+            EXTRA_LARGE_0_50:max(dim_weight,weight),
+            EXTRA_LARGE_50_70:max(dim_weight,weight),
+            EXTRA_LARGE_70_150:weight,
+            EXTRA_LARGE_150:weight
             }
         
         fba_conditions = (
-            (size_tier == SMALL_STANDARD and weight_to_use[SMALL_STANDARD] <= 4/16,
-              {'Jan-Sept':3.22,'Oct-Dec':3.42}),
+            (size_tier == SMALL_STANDARD and weight_to_use[SMALL_STANDARD] <= 2/16, {'Jan-Sept':3.06,'Oct-Dec':3.06}),
             
-            (size_tier == SMALL_STANDARD and 4/16 < weight_to_use[SMALL_STANDARD] <= 8/16,
-              {'Jan-Sept':3.4,'Oct-Dec':3.6}),
+            (size_tier == SMALL_STANDARD and (2/16 < weight_to_use[SMALL_STANDARD] <= 4/16), {'Jan-Sept':3.15,'Oct-Dec':3.15}),
+
+            (size_tier == SMALL_STANDARD and (4/16 < weight_to_use[SMALL_STANDARD] <= 6/16), {'Jan-Sept':3.24,'Oct-Dec':3.24}),
+
+            (size_tier == SMALL_STANDARD and (6/16 < weight_to_use[SMALL_STANDARD] <= 8/16), {'Jan-Sept':3.33,'Oct-Dec':3.33}),
+
+            (size_tier == SMALL_STANDARD and (8/16 < weight_to_use[SMALL_STANDARD] <= 10/16), {'Jan-Sept':3.43,'Oct-Dec':3.43}),
+
+            (size_tier == SMALL_STANDARD and (10/16 < weight_to_use[SMALL_STANDARD] <= 12/16), {'Jan-Sept':3.53,'Oct-Dec':3.53}),
+
+            (size_tier == SMALL_STANDARD and (12/16 < weight_to_use[SMALL_STANDARD] <= 14/16), {'Jan-Sept':3.60,'Oct-Dec':3.60}),
+
+            (size_tier == SMALL_STANDARD and (14/16 < weight_to_use[SMALL_STANDARD] <= 16/16), {'Jan-Sept':3.65,'Oct-Dec':3.65}),
+
             
-            (size_tier == SMALL_STANDARD and 8/16 < weight_to_use[SMALL_STANDARD] <= 12/16,
-              {'Jan-Sept':3.58,'Oct-Dec':3.78}),
+            (size_tier == LARGE_STANDARD and weight_to_use[LARGE_STANDARD] <= 4/16, {'Jan-Sept':3.68,'Oct-Dec':3.68}),
             
-            (size_tier == SMALL_STANDARD and 12/16 < weight_to_use[SMALL_STANDARD] <= 16/16,
-              {'Jan-Sept':3.77,'Oct-Dec':3.97}),
+            (size_tier == LARGE_STANDARD and (4/16 < weight_to_use[LARGE_STANDARD] <= 8/16), {'Jan-Sept':3.90,'Oct-Dec':3.90}),
             
-            (size_tier == LARGE_STANDARD and weight_to_use[LARGE_STANDARD] <= 4/16,
-              {'Jan-Sept':3.86,'Oct-Dec':4.16}),
+            (size_tier == LARGE_STANDARD and (8/16 < weight_to_use[LARGE_STANDARD] <= 12/16), {'Jan-Sept':4.15,'Oct-Dec':4.15}),
+
+            (size_tier == LARGE_STANDARD and (12/16 < weight_to_use[LARGE_STANDARD] <= 16/16), {'Jan-Sept':4.55,'Oct-Dec':4.55}),
+
+            (size_tier == LARGE_STANDARD and (1 < weight_to_use[LARGE_STANDARD] <= 1.25), {'Jan-Sept':4.99,'Oct-Dec':4.99}),
+
+            (size_tier == LARGE_STANDARD and (1.25 < weight_to_use[LARGE_STANDARD] <= 1.5), {'Jan-Sept':5.37,'Oct-Dec':5.37}),
+
+            (size_tier == LARGE_STANDARD and (1.5 < weight_to_use[LARGE_STANDARD] <= 1.75), {'Jan-Sept':5.52,'Oct-Dec':5.52}),
+
+            (size_tier == LARGE_STANDARD and (1.75 < weight_to_use[LARGE_STANDARD] <= 2), {'Jan-Sept':5.77,'Oct-Dec':5.77}),
+
+            (size_tier == LARGE_STANDARD and (2 < weight_to_use[LARGE_STANDARD] <= 2.25), {'Jan-Sept':5.87,'Oct-Dec':5.87}),
+
+            (size_tier == LARGE_STANDARD and (2.25 < weight_to_use[LARGE_STANDARD] <= 2.5), {'Jan-Sept':6.05,'Oct-Dec':6.05}),
+
+            (size_tier == LARGE_STANDARD and (2.5 < weight_to_use[LARGE_STANDARD] <= 2.75), {'Jan-Sept':6.21,'Oct-Dec':6.21}),
+
+            (size_tier == LARGE_STANDARD and (2.75 < weight_to_use[LARGE_STANDARD] <= 3), {'Jan-Sept':6.62,'Oct-Dec':6.62}),
+
+            (size_tier == LARGE_STANDARD and (3 < weight_to_use[LARGE_STANDARD] <= 20),
+              {'Jan-Sept':6.92+(max((weight_to_use[LARGE_STANDARD]-3)*4,0)*0.08),
+              'Oct-Dec':6.92+(max((weight_to_use[LARGE_STANDARD]-3)*4,0)*0.08)}),
+
+
+
+            (size_tier == LARGE_BULKY and weight_to_use[LARGE_BULKY] <= 50,
+              {'Jan-Sept':9.61+(max((weight_to_use[LARGE_BULKY]-1),0)*0.38),
+              'Oct-Dec':9.61+(max((weight_to_use[LARGE_BULKY]-1),0)*0.38)}),
             
-            (size_tier == LARGE_STANDARD and 4/16 < weight_to_use[LARGE_STANDARD] <= 8/16,
-              {'Jan-Sept':4.08,'Oct-Dec':4.38}),
+            (size_tier == EXTRA_LARGE_0_50 and weight_to_use[EXTRA_LARGE_0_50] <= 50,
+              {'Jan-Sept':26.33+(max((weight_to_use[EXTRA_LARGE_0_50]-1),0)*0.38),
+              'Oct-Dec':26.33+(max((weight_to_use[EXTRA_LARGE_0_50]-1),0)*0.38)}),
             
-            (size_tier == LARGE_STANDARD and 8/16 < weight_to_use[LARGE_STANDARD] <= 12/16,
-              {'Jan-Sept':4.24,'Oct-Dec':4.54}),
+            (size_tier == EXTRA_LARGE_50_70 and (50 < weight_to_use[EXTRA_LARGE_50_70] <= 70),
+              {'Jan-Sept':40.12+(max((weight_to_use[EXTRA_LARGE_50_70]-51),0)*0.75),
+              'Oct-Dec':40.12+(max((weight_to_use[EXTRA_LARGE_50_70]-51),0)*0.75)}),
             
-            (size_tier == LARGE_STANDARD and 12/16 < weight_to_use[LARGE_STANDARD] <= 16/16,
-              {'Jan-Sept':4.75,'Oct-Dec':5.05}),
-            
-            (size_tier == LARGE_STANDARD and 1 < weight_to_use[LARGE_STANDARD] <= 1.5,
-              {'Jan-Sept':5.40,'Oct-Dec':5.70}),
-            
-            (size_tier == LARGE_STANDARD and 1.5 < weight_to_use[LARGE_STANDARD] <= 2,
-              {'Jan-Sept':5.69,'Oct-Dec':5.99}),
-            
-            (size_tier == LARGE_STANDARD and 2 < weight_to_use[LARGE_STANDARD] <= 2.5,
-              {'Jan-Sept':6.10,'Oct-Dec':6.60}),
-            
-            (size_tier == LARGE_STANDARD and 2.5 < weight_to_use[LARGE_STANDARD] <= 3,
-              {'Jan-Sept':6.39,'Oct-Dec':6.89}),
-            
-            (size_tier == LARGE_STANDARD and 3 < weight_to_use[LARGE_STANDARD] <= 20,
-              {'Jan-Sept':7.17+(max((weight_to_use[LARGE_STANDARD]-3)*2,0)*0.16),
-              'Oct-Dec':7.67+(max((weight_to_use[LARGE_STANDARD]-3)*2,0)*0.16)}),
-            
-            (size_tier == SMALL_OVERSIZE and weight_to_use[SMALL_OVERSIZE] <= 70,
-              {'Jan-Sept':9.73+(max((weight_to_use[SMALL_OVERSIZE]-1),0)*0.42),
-              'Oct-Dec':10.73+(max((weight_to_use[SMALL_OVERSIZE]-1),0)*0.42)}),
-            
-            (size_tier == MEDIUM_OVERSIZE and weight_to_use[MEDIUM_OVERSIZE] <= 150,
-              {'Jan-Sept':19.05+(max((weight_to_use[MEDIUM_OVERSIZE]-1),0)*0.42),
-              'Oct-Dec':21.55+(max((weight_to_use[MEDIUM_OVERSIZE]-1),0)*0.42)}),
-            
-            (size_tier == LARGE_OVERSIZE and weight_to_use[LARGE_OVERSIZE] <= 150,
-              {'Jan-Sept':89.98+(max((weight_to_use[LARGE_OVERSIZE]-90),0)*0.83),
-              'Oct-Dec':92.48+(max((weight_to_use[LARGE_OVERSIZE]-90),0)*0.83)}),
-            
-            (size_tier == SPECIAL_OVERSIZE and weight_to_use[SPECIAL_OVERSIZE] > 150,
-              {'Jan-Sept':158.49+(max((weight_to_use[SPECIAL_OVERSIZE]-90),0)*0.83),
-              'Oct-Dec':160.99+(max((weight_to_use[SPECIAL_OVERSIZE]-90),0)*0.83)})
+            (size_tier == EXTRA_LARGE_70_150 and (70 < weight_to_use[EXTRA_LARGE_70_150] <= 150),
+              {'Jan-Sept':54.81+(max((weight_to_use[EXTRA_LARGE_70_150]-71),0)*0.75),
+              'Oct-Dec':54.81+(max((weight_to_use[EXTRA_LARGE_70_150]-71),0)*0.75)})
+
+            (size_tier == EXTRA_LARGE_150 and weight_to_use[EXTRA_LARGE_150] > 150,
+              {'Jan-Sept':194.95+(max((weight_to_use[EXTRA_LARGE_150]-151),0)*0.19),
+              'Oct-Dec':194.95+(max((weight_to_use[EXTRA_LARGE_150]-151),0)*0.19)})
             )
         
         for c in fba_conditions:
@@ -150,7 +162,7 @@ class Box:
         
 
     def __get_storage_fees(self):
-        fee_jan_sept = {'standard':0.87, 'oversize':0.56}
+        fee_jan_sept = {'standard':0.78, 'oversize':0.56}
         fee_oct_dec = {'standard':2.40, 'oversize':1.40}
         cu_ft = self.cu_ft
         if 'standard' in self.size_tier:
