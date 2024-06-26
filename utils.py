@@ -43,26 +43,26 @@ class Box:
     def __get_size_tier(self):
         weight = self.weight
         min_side, median_side, max_side = self.min_side, self.median_side, self.max_side
-        ship_weight = round(max((min_side*median_side*max_side) / 139,weight),2)
-        ship_weight_oversize = round(max((max(2,min_side)*max(2,median_side)*max_side) / 139,weight),2)
+        ship_weight = round(max((min_side*median_side*max_side) / 139, weight),4)
+        ship_weight_oversize = round(max((max(2,min_side)*max(2,median_side)*max_side) / 139, weight),4)
         
         conditions = (
             (SMALL_STANDARD,
-             min_side <= 0.75 and median_side <= 12 and max_side <= 15 and ship_weight <= 1),
+             min_side <= 0.75 and median_side <= 12 and max_side <= 15 and weight <= 1),
             
             (LARGE_STANDARD,
              min_side <= 8 and median_side <= 14 and max_side <= 18 and ship_weight <= 20),
             
             (LARGE_BULKY,
-             (min_side+median_side)*2+max_side <= 130 and median_side <= 33 and max_side <= 59 and ship_weight_oversize <= 50),
+             (min_side+median_side)*2+max_side <= 130 and median_side <= 33 and max_side <= 59 and ship_weight <= 50),
             
-            (EXTRA_LARGE_0_50, ship_weight_oversize <= 50),
+            (EXTRA_LARGE_0_50, ship_weight <= 50),
             
-            (EXTRA_LARGE_50_70, 50 < ship_weight_oversize <= 70),
+            (EXTRA_LARGE_50_70, 50 < ship_weight <= 70),
             
-            (EXTRA_LARGE_70_150, 70 < ship_weight_oversize <= 150),
+            (EXTRA_LARGE_70_150, 70 < ship_weight <= 150),
 
-            (EXTRA_LARGE_150, ship_weight_oversize >150 )
+            (EXTRA_LARGE_150, weight >150 )
             )
         for c in conditions:
             if c[1]:
