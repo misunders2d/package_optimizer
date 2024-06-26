@@ -147,7 +147,7 @@ class Box:
             
             (size_tier == EXTRA_LARGE_70_150 and (70 < weight_to_use[EXTRA_LARGE_70_150] <= 150),
               {'Jan-Sept':54.81+(max((weight_to_use[EXTRA_LARGE_70_150]-71),0)*0.75),
-              'Oct-Dec':54.81+(max((weight_to_use[EXTRA_LARGE_70_150]-71),0)*0.75)})
+              'Oct-Dec':54.81+(max((weight_to_use[EXTRA_LARGE_70_150]-71),0)*0.75)}),
 
             (size_tier == EXTRA_LARGE_150 and weight_to_use[EXTRA_LARGE_150] > 150,
               {'Jan-Sept':194.95+(max((weight_to_use[EXTRA_LARGE_150]-151),0)*0.19),
