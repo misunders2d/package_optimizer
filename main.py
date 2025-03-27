@@ -7,7 +7,7 @@ from utils import *
 
 st.set_page_config(page_title = 'Package optimizer', layout ='wide')
 
-MAX_SLIDER = 20.5
+MAX_SLIDER = 30.5
 S1 = 4.0
 S2 = 6.0
 S3 = 10.0
